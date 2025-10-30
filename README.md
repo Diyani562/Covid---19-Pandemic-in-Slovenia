@@ -1,0 +1,1 @@
+Analyzes the COVID-19 pandemic in Slovenia using R Markdown. Includes Slovenia’s background, key demographics, and economy, along with COVID-19 trends and visualizations. Provides interactive, data-driven insights using R.

@@ -1,0 +1,354 @@
+---
+title: "\"Covid-19 Pandemic in Slovenia\""
+author: "\"B.M.D.T. Bellana - AS2021562\""
+date: "2024-08-02"
+output: html_document
+---
+
+## **Introduction about Slovenia**
+
+>Republic of Slovenia is a country in Southern Central Europe.Slovenia is bordered by Italy to the west, Austria to the north, Hungary to the northeast, Croatia to the south and southeast and a short coastline within the Adriatic Sea to the southwest. Slovenia is mostly mountainous and forested, covers 20,271 square kilometers(7827 sq mi), and has a population of approximately 2.1 million. Slovenia is a developed country with a high income economy ranking highly in the Human Development Index. The Gini coefficient rates its income inequality among the lowest in the world. It is a member of the United Nations, the European Union, the Euro zone, the Schengen Area, the OSCE, the OECD, the Council of Europe, and NATO. Slovenia was ranked 33rd in the Global Innovation Index in 2023.Slovenia is a parliamentary democracy republic with a multi-party system. The head of the state is the president.Slovenia is in Central Europe touching the Alps and bordering the Mediterranean sea. Four major European geographic regions meet in Slovenia: the Alps, the Dinarides, the Pannonian Plain and the Mediterranean sea.Slovenia is located in temperature latitudes.
+
+##### **Demonym(s)**
+
+-   Slovene
+-   Slovenian
+
+##### **Capital City**
+
+-   Capital and largest city : Ljubljana
+
+##### **Currency**
+
+-   Euro (EUR)
+
+##### **Languages**
+
+-   Official languages : Slovene
+-   Recognized regional languages : Italian, Hungarian
+
+##### **Ethnic Groups(2002)**
+
+-   Slovenes : 83.1%
+-   Serbs : 2.0%
+-   Croats : 1.8%
+-   Bosniaks : 1.6%
+-   Romani : 0.4%
+-   Hungarians : 0.3%
+-   Italians : 0.1%
+-   Other : 2.2%
+-   Unspecified: 8.9%
+
+##### **Religions(2018)**
+
+-   Christianity : 77.8%
+-   No religion : 18.3%
+-   Other : 3.9%
+
+#### **Economy**
+
+>Slovenia has a developed economy and is the richest Slavic country by GDP per capita. Slovenia is also among the top global economies in terms of human capital. It is the most developed transition country with an old mining-industrial tradition, chemical industry and developed service activities. Slovenia was in the beginning of 2007 the first new member to introduce the euro as its currency, replacing the tolar. In recent years, Slovenia has experienced moderate economic growth with GDP growth averaging around 2% per year between 2017 and 2019. However, like many other countries, Slovenia's economy has been impacted by the COVID-19 pandemic with a contraction of around 5% in 2020. Overall, Slovenia's economy is relatively small but open and has shown resilience in recent years.
+
+
+## **COVID-19 pandemic in Slovenia** 
+The COVID-19 pandemic in Slovenia was a part of the pandemic of corona virus disease 2019 (COVID-19) caused by severe acute respiratory syndrome corona virus 2 (SARS-CoV-2). The first Slovenian citizen to be infected was resulted positive on 3 March 2020.
+
+#### **Background**
+
+In late December 2019 a new (novel) corona virus was identified in China causing severe respiratory disease including pneumonia. It was originally named Novel Corona virus and The World Health Organization (WHO) advised the following language associated with the virus. COVID-19 has been categorized as an airborne High Consequence Infections Disease.
+
+
+
+------------------------------------------------------------------------
+
+## **Exploratory Data Analysis**
+
+### **Structure of Data**
+##### Daily summary of the Coronavirus (COVID-19) cases by state/province.
+
+#### **Format**
+A data frame with 7 variables.
+
+**date :**
+Date in YYYY-MM-DD format.
+
+**province :**
+Name of province/state, for countries where data is provided split across multiple provinces/states.
+
+**country :**
+Name of country/region.
+
+**lat :**
+Latitude of center of geographic region, defined as either country or, if available, province.
+
+**long :**
+Longitude of center of geographic region, defined as either country or, if available, province.
+
+**type :**
+An indicator for the type of cases (confirmed, death, recovered).
+
+**cases :**
+Number of cases on given date.
+
+**uid :**
+Country code
+
+**iso2 :**
+Officially assigned country code identifiers with two-letter
+
+**iso3 :**
+Officially assigned country code identifiers with three-letter
+
+**code3 :**
+UN country code
+
+**combined_key :**
+Country and province (if applicable)
+
+**population :**
+Country or province population
+
+**continent_name :**
+Continent name
+
+**continent_code :**
+Continent code
+
+##### **Details :**
+The data set contains the daily summary of Corona virus cases (confirmed, death, and recovered), by state/province.
+
+##### **Source :**
+Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) Corona virus website.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+```{r,echo=FALSE, message=FALSE,warning=FALSE, paged.print=FALSE, results=FALSE}
+
+library(ggplot2)
+library(tidyverse) 
+library(coronavirus)
+library(skimr)
+library(magrittr)
+
+
+slovenia_corona <- coronavirus %>% filter(country == "Slovenia")
+
+```
+
+
+### **Distribution of Covid-19 in Slovenia** 
+
+#### **Table 1: Summary about the Filtered Slovenia Corona Dataset**
+```{r,echo=FALSE, message=FALSE,warning=FALSE}
+summary(slovenia_corona)
+
+```
+
+
+This is the summary about filtered data set Slovenia from the coronavirus data set.This table shows that, confirmed, death and recovered cases in Slovenia.The data set has Slovenia corona data from 2020-01-22 to 2023-03-09. We can see negative values in cases column. Cases cannot be negative. According to the above summary,the mean number of cases are 464.5 and the maximum number of cases is 23332.
+
+
+```{r,echo=FALSE,comment=NA}
+slovenia_corona_new <- filter(slovenia_corona,cases >= 0)
+slovenia_corona2 <- select(slovenia_corona_new,date,type,cases)
+slovenia_corona3 <- pivot_wider(slovenia_corona2,names_from = "type",values_from = "cases")
+
+```
+
+```{r,echo=FALSE,eval=FALSE}
+skim(slovenia_corona3)
+```
+
+
+
+
+#### **Confirmed corona cases in Slovenia**
+
+```{r,echo=FALSE}
+ggplot(slovenia_corona3, aes(x=date, y=confirmed)) +
+ geom_line(col="navyblue") + labs(x= "Date ",y= "Confirmed cases",title = " Figure 1: Confirmed corona cases in Slovenia based on dates")
+```
+
+
+According to figure 1, we can see slightly fluctuated upward and downward trends except the very first few months of 2022 .From January 2020 to the last few months of 2020 shows a very small number of corona confirmed cases in Slovenia and at early 2022, it shows rapid increase. After that the mean level of confirmed corona cases is fluctuating around a certain value.
+
+
+
+
+#### **Death corona cases in Slovenia**
+
+```{r,echo=FALSE}
+ggplot(slovenia_corona3, aes(x=date, y=death)) +
+ geom_line(col="red") + labs(x= "Date ",y= "  Death cases",title = " Figure 2: Death corona cases in Slovenia based on dates")
+```
+
+
+Based on the figure 2, in late 2020 and early 2021 show the highest number of death cases in Slovenia, then there is a huge decrease in number of deaths by the middle of the year 2021. Again the number of deaths has increased slightly and from April 2022 to 2023 shows a small number of  death cases.
+
+
+
+
+#### **Recovery corona cases in Slovenia**
+
+
+```{r,echo=FALSE}
+ggplot(slovenia_corona3, aes(x=date, y=recovery)) +
+ geom_line(col="black") + labs(x= "Date ",y= " recovery cases",title = " Figure 3: recovery corona cases in Slovenia based on dates")
+```
+
+
+The figure 3 reveals that almost all the  recovery cases are scattered from late 2020 to mid 2021. After that all the recovery cases are going to be zero.
+ 
+
+
+#### **All confirmed,Recovery and death cases in Slovenia**
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+ggplot(slovenia_corona2, aes(date, cases, col=cases)) + geom_path(size=1) + facet_wrap(~type,nrow=3) +
+  labs(title = " Figure 4: Confirmed, Death and Recovered cases in Slovenia")
+```
+
+```{r,echo=FALSE}
+ggplot(slovenia_corona2,aes(x=date,y=cases,col=type))+geom_point()+labs(title = "Figure 5: All corona cases in Slovenia")
+```
+
+#### **Table 2:Summary of Slovenia corona data**
+
+```{r,echo= FALSE,comment=NA}
+summary(slovenia_corona3)
+```
+
+According to above figures and table, the death cases are very lower than confirmed and recovery cases in Slovenia. The mean number of confirmed cases, death cases and recovery cases are approximately 1165, 6 and 222 respectively. There are two negative values in the data  set. It is not possible. So, we removed the negative values and obtained results.
+
+
+
+#### **Active corona cases in Slovenia**
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE, paged.print=FALSE}
+
+slovenia_active_cases <-  slovenia_corona %>%
+   group_by(type, date) %>%
+   summarise(total_cases= sum(cases)) %>%
+   pivot_wider(names_from = type, values_from = total_cases) %>%
+   arrange(date) %>%
+   mutate(active = confirmed - death - recovery) %>%
+   mutate(total_active_cases = cumsum(active),
+          total_recovered_cases = cumsum(recovery),
+          total_death_cases = cumsum(death))
+
+
+
+ggplot(slovenia_active_cases,aes(x =date,y =total_active_cases))+geom_line(color="brown",size=1)+labs(title="Figure 6: Acive cases in Slovenia")
+
+
+```
+Corresponding to figure 6, a small number of active corona cases is shown until the latter part of 2021, and then we can see a gradual increase in the active corona cases throughout 2022.
+
+
+
+### **Comparison**
+
+Neighboring countries to Slovenia are Italy, Austria, Hungary and Croatia. Under this part we do a comparison about the number of corona cases in those countries with the number of corona cases in Slovenia. 
+
+#### **Table 3:Mean of population**
+
+```{r,echo=FALSE,comment=NA}
+neighbour_countries <- coronavirus %>% filter (continent_code=="EU")
+choosed_countries <- neighbour_countries %>% filter (country== c("Italy","Austria","Hungary","Croatia","Slovenia"))
+choosed_countries_filtered <- filter(choosed_countries,cases >= 0)
+choosed_countries_grouped<- choosed_countries %>% group_by(country)
+choosed_countries_grouped %>% summarise(mean_population= mean(population))
+```
+
+
+Italy has the largest population among these countries with around 60.5 million people. It is significantly more populous than the others. Austria and Hungary have similar population sizes, both in the range of 9 million to 9.7 million. Croatia has a smaller population compared to Austria and Hungary with about 4.1 million people.
+Slovenia has the smallest population of the group with approximately 2.1 million people.
+
+
+
+#### **Comparison of confirmed corona cases with Italy,Austria,Hungary and Croatia**
+
+```{r,echo=FALSE,message=FALSE, warning=FALSE, paged.print=FALSE}
+
+confirmed_corona_cases <- choosed_countries_filtered %>% filter (type=="confirmed")
+ggplot(confirmed_corona_cases, aes(x=date, y= cases, colour=country)) + geom_path(size=1) +
+  labs(title = " Figure 7: Comparison of confirmed Corona cases with Italy, Austria, Hungary, Croatia")
+
+```
+
+#### **Table 4: Mean, median and maximum of confirmed corona cases** 
+
+```{r,comment=NA, echo=FALSE}
+confirmed_corona_cases_grouped <- confirmed_corona_cases %>% group_by(country)
+confirmed_corona_cases_grouped %>% summarise(mean_confirmed=mean(cases), median_confirmed=median(cases), max_confirmed=max(cases))                                                              
+
+```
+
+Relative to the figure 7 and table 4, we can clearly see that Italy has the highest confirmed corona cases while Croatia has the lowest. There is a considerable difference between the lowest and the highest. The number of confirmed corona cases of Slovenia is almost the same compared with Croatia.
+
+
+
+#### **Comparison of recovery corona cases with Italy,Austria,Hungary and Croatia**
+
+
+```{r,echo=FALSE}
+recovery_corona_cases <- choosed_countries_filtered %>% filter (type=="recovery")
+ggplot(recovery_corona_cases, aes(x=date, y= cases, colour=country)) + geom_path(size=1) +
+  labs(title = " Figure 8: Comparison of recovery Corona cases with Italy, Austria,
+                            Hungary, Croatia")
+```
+
+#### **Table 5: Mean, median and maximum recovery corona cases**
+
+```{r,comment=NA, echo=FALSE}
+recovery_corona_cases_grouped <- recovery_corona_cases %>% group_by(country)
+recovery_corona_cases_grouped %>% summarise(mean_recovery=mean(cases), median_recovery=median(cases), max_recovery=max(cases))                                                               
+
+```
+
+According to the figure 8 and table 5, Slovenia has the most recovered corona cases while Italy has the lowest.On average, Italy reports thousands of recoveries per day, reflecting its large population. Austria, with a smaller population compared to Italy, typically reports fewer daily recoveries. Slovenia, being a smaller country with population often reports fewer daily recoveries compared to others. 
+
+
+#### **Comparison of death corona cases with Italy,Austria,Hungary and Croatia**
+
+```{r,echo=FALSE}
+death_corona_cases <- choosed_countries_filtered %>% filter (type=="death")
+ggplot(death_corona_cases, aes(x=date, y= cases, colour=country)) + geom_path(size=1)  +
+  labs(title = " Figure 9: Comparison of Death Corona cases with Italy, Austria, Hungary, Croatia")
+
+```
+
+#### **Table 6: Mean, media and maximum death corona cases**
+
+```{r,comment=NA, echo=FALSE}
+death_cases_grouped <- death_corona_cases %>% group_by(country)
+death_cases_grouped %>% summarise(mean_death=mean(cases),median_death=median(cases), max_death=max(cases))                                                               
+```
+
+Corresponding to the figure 9 and table 6, we can conclude that Slovenia’s daily death figures tend to be lower compared to neighboring  countries. Typically, it might report a handful of deaths per day. Italy has experienced fluctuating daily death rates during the period we are considering. It might see higher daily figures compared to other countries. Daily deaths range from a handful to several dozen in Italy. Austria and Hungary also had varying daily death rates with means 19.7 and 44.1 respectively.
+
+
+
+## **Discussion and Conclusion**
+
+Throughout the whole Slovenia corona virus data set, the province variable was already NA. There were two negative values in the Slovenia data set ,one negative value was in death cases and the other one in recovery cases. It was an error. So we removed that negative values and obtained results. We used only few columns in the data set for this analysis. When confirmed corona cases are at its highest, recovery cases are at zero and after June-July period of 2021, all values of recovery corona cases have become zero. It might be an error. During the period of highest deaths, confirmed corona cases are at lower values in Slovenia. The comparison with Italy, Austria, Hungary and Croatia, in all cases Italy had the highest amount. Death and recovery corona cases are lowest in Slovenia compared with neighboring countries. If we consider the proportions of all cases with the populations then our conclusions might be different than now because there is a huge gap between the mean populations of Italy and Slovenia. It is around 58.4 million. In the other neighboring countries of Slovenia, also have mean population under 10 million. So, we can conclude that population was directly affect the number of corona cases in each country. 
+
+
+## **References**
+
+https://en.wikipedia.org/wiki/Slovenia#Government_and_politics 
+<br>
+https://en.wikipedia.org/wiki/Slovenia#Economy
+<br>
+(accessed August 2,2024 from https://en.wikipedia.org/wiki/Slovenia)
+
+
+
+
+
+
+
+
+
+
+
